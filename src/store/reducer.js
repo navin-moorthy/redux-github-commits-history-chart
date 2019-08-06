@@ -1,24 +1,28 @@
 import {
   UPDATE_USERNAME,
-  INVALID_USERNAME,
+  USERNAME_STATUS,
   UPDATE_USERDETAILS,
-  UPDATE_PUBLICREPOS
+  UPDATE_PUBLICREPOS,
+  UPDATE_CHARTDATA,
+  MODAL_STATUS
 } from "./constants";
 
 const initialState = {
   username: "",
   isValidUser: false,
   userDetails: [],
-  publicRepos: []
+  publicRepos: [],
+  chartData: [],
+  isModalOpen: false
 };
 
-function rootReducer(state = initialState, action) {
+function reducer(state = initialState, action) {
   if (action.type === UPDATE_USERNAME) {
     return Object.assign({}, state, {
       username: action.payload
     });
   }
-  if (action.type === INVALID_USERNAME) {
+  if (action.type === USERNAME_STATUS) {
     return Object.assign({}, state, {
       isValidUser: action.payload
     });
@@ -33,7 +37,17 @@ function rootReducer(state = initialState, action) {
       publicRepos: action.payload
     });
   }
+  if (action.type === UPDATE_CHARTDATA) {
+    return Object.assign({}, state, {
+      chartData: action.payload
+    });
+  }
+  if (action.type === MODAL_STATUS) {
+    return Object.assign({}, state, {
+      isModalOpen: action.payload
+    });
+  }
   return state;
 }
 
-export default rootReducer;
+export default reducer;

@@ -3,7 +3,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import {
   updateUsername,
-  invalidUsername,
+  usernameStatus,
   updateUserDetails,
   updatePublicRepos
 } from "../store/actions";
@@ -11,7 +11,7 @@ import {
 function mapDispatchToProps(dispatch) {
   return {
     updateUsername: username => dispatch(updateUsername(username)),
-    invalidUsername: isValidUser => dispatch(invalidUsername(isValidUser)),
+    usernameStatus: isValidUser => dispatch(usernameStatus(isValidUser)),
     updateUserDetails: userDetails => dispatch(updateUserDetails(userDetails)),
     updatePublicRepos: publicRepos => dispatch(updatePublicRepos(publicRepos))
   };
@@ -19,7 +19,7 @@ function mapDispatchToProps(dispatch) {
 
 const ConnectedUserSearch = ({
   updateUsername,
-  invalidUsername,
+  usernameStatus,
   updateUserDetails,
   updatePublicRepos
 }) => {
@@ -37,8 +37,7 @@ const ConnectedUserSearch = ({
       const searchNameRes = await axios.get(
         `https://api.github.com/users/${searchName}`
       );
-      console.log(searchNameRes);
-      invalidUsername(false);
+      usernameStatus(false);
       updateUsername(searchNameRes.data.login);
       updateUserDetails(searchNameRes.data);
       const publicRepoRes = await axios.get(
@@ -47,7 +46,7 @@ const ConnectedUserSearch = ({
       updatePublicRepos(publicRepoRes.data);
       setSearchName("");
     } catch (err) {
-      invalidUsername(true);
+      usernameStatus(true);
       setSearchName("");
     }
   };

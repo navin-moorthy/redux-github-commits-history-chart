@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React from "react";
 import { connect } from "react-redux";
 
 // Components
@@ -13,47 +12,20 @@ const mapStateToProps = state => {
     username: state.username,
     isValidUser: state.isValidUser,
     userDetails: state.userDetails,
-    publicRepos: state.publicRepos
+    publicRepos: state.publicRepos,
+    chartData: state.chartData,
+    isModalOpen: state.isModalOpen
   };
 };
 
-const ConnectedApp = ({ username, isValidUser, userDetails, publicRepos }) => {
-  console.log(publicRepos);
-  // States
-  const [chartData, setChartData] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-
-  // Handle each repository click
-  const handleRepoClick = async event => {
-    const commitStatRes = await axios.get(
-      `https://api.github.com/repos/${username}/${
-        event.target.textContent
-      }/stats/participation`
-    );
-    const weeklyCommits = commitStatRes.data.all.reverse();
-    // Pagination Calculation
-    let weekCount = 1;
-    let chartData = [];
-    while (weeklyCommits.length > 0) {
-      const splitCommits = [...weeklyCommits.splice(0, 10)];
-      let splitChartData = [];
-      // eslint-disable-next-line
-      splitCommits.forEach(data => {
-        splitChartData.push([`Week ${weekCount}`, data]);
-        weekCount += 1;
-      });
-      splitChartData.unshift(["Weeks", "Total Commits"]);
-      chartData.push(splitChartData);
-    }
-    setChartData(chartData);
-    setShowModal(true);
-  };
-
-  // Handle Modal Close
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
+const ConnectedApp = ({
+  username,
+  isValidUser,
+  userDetails,
+  publicRepos,
+  chartData,
+  isModalOpen
+}) => {
   return (
     <div className="app">
       <h2 className="app-title text-center">GitHub Commits History Chart</h2>
@@ -67,14 +39,8 @@ const ConnectedApp = ({ username, isValidUser, userDetails, publicRepos }) => {
         </div>
       )}
       {!isValidUser && <Bio userName={username} userDetails={userDetails} />}
-      {!isValidUser && (
-        <Repo
-          userName={username}
-          publicRepos={publicRepos}
-          handleRepoClick={handleRepoClick}
-        />
-      )}
-      {showModal && <Modal chartData={chartData} closeModal={closeModal} />}
+      {!isValidUser && <Repo userName={username} publicRepos={publicRepos} />}
+      {isModalOpen && <Modal chartData={chartData} />}
     </div>
   );
 };

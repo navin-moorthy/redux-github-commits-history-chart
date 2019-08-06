@@ -1,12 +1,21 @@
 import React, { useState } from "react";
 import Chart from "react-google-charts";
 
-const Modal = ({ chartData, closeModal }) => {
+import { connect } from "react-redux";
+import { modalStatus } from "../store/actions";
+
+function mapDispatchToProps(dispatch) {
+  return {
+    modalStatus: isModalOpen => dispatch(modalStatus(isModalOpen))
+  };
+}
+
+const ConnectedModal = ({ chartData, modalStatus }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
   const handleClose = () => {
     setCurrentPage(0);
-    closeModal();
+    modalStatus(false);
   };
 
   return (
@@ -57,5 +66,10 @@ const Modal = ({ chartData, closeModal }) => {
     </>
   );
 };
+
+const Modal = connect(
+  null,
+  mapDispatchToProps
+)(ConnectedModal);
 
 export default Modal;
