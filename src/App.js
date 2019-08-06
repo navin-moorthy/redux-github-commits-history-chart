@@ -1,52 +1,32 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { connect } from "react-redux";
 
 // Components
-import Modal from "./Modal";
-import UserSearch from "./UserSearch";
-import Bio from "./Bio";
-import Repo from "./Repo";
+import Modal from "./components/Modal";
+import UserSearch from "./components/UserSearch";
+import Bio from "./components/Bio";
+import Repo from "./components/Repo";
 
-const App = () => {
+const mapStateToProps = state => {
+  return {
+    username: state.username,
+    isValidUser: state.isValidUser,
+    userDetails: state.userDetails,
+    publicRepos: state.publicRepos
+  };
+};
+
+const ConnectedApp = ({ username, isValidUser, userDetails, publicRepos }) => {
+  console.log(publicRepos);
   // States
-  const [searchName, setSearchName] = useState("");
-  const [userName, setuserName] = useState("");
-  const [invalidUser, setInvalidUser] = useState(false);
-  const [userDetails, setUserDetails] = useState({});
-  const [publicRepos, setPublicRepos] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [showModal, setShowModal] = useState(false);
-
-  // Handle Username Input Change
-  const handleChange = event => {
-    setSearchName(event.target.value);
-  };
-
-  // Handle Form Submit
-  const handleSubmit = async event => {
-    try {
-      event.preventDefault();
-      const searchNameRes = await axios.get(
-        `https://api.github.com/users/${searchName}`
-      );
-      setInvalidUser(false);
-      setuserName(searchNameRes.data.login);
-      setUserDetails(searchNameRes.data);
-      setSearchName("");
-      const publicRepoRes = await axios.get(
-        `https://api.github.com/users/${searchName}/repos`
-      );
-      setPublicRepos(publicRepoRes.data);
-    } catch (err) {
-      setInvalidUser(true);
-      setSearchName("");
-    }
-  };
 
   // Handle each repository click
   const handleRepoClick = async event => {
     const commitStatRes = await axios.get(
-      `https://api.github.com/repos/${userName}/${
+      `https://api.github.com/repos/${username}/${
         event.target.textContent
       }/stats/participation`
     );
@@ -80,20 +60,16 @@ const App = () => {
       <h5 className="app-subTitle text-center">
         Get weekly commit count on all public repos
       </h5>
-      <UserSearch
-        searchName={searchName}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-      />
-      {invalidUser && (
+      <UserSearch />
+      {isValidUser && (
         <div className="bio-warning text-center">
           Please enter a valid username!!
         </div>
       )}
-      {!invalidUser && <Bio userName={userName} userDetails={userDetails} />}
-      {!invalidUser && (
+      {!isValidUser && <Bio userName={username} userDetails={userDetails} />}
+      {!isValidUser && (
         <Repo
-          userName={userName}
+          userName={username}
           publicRepos={publicRepos}
           handleRepoClick={handleRepoClick}
         />
@@ -102,5 +78,7 @@ const App = () => {
     </div>
   );
 };
+
+const App = connect(mapStateToProps)(ConnectedApp);
 
 export default App;
