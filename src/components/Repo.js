@@ -10,16 +10,23 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+const mapStateToProps = state => {
+  return {
+    username: state.username,
+    publicRepos: state.publicRepos
+  };
+};
+
 const ConnectedRepo = ({
   publicRepos,
-  userName,
+  username,
   updateChartData,
   modalStatus
 }) => {
   // Handle each repository click
   const handleRepoClick = async event => {
     const commitStatRes = await axios.get(
-      `https://api.github.com/repos/${userName}/${
+      `https://api.github.com/repos/${username}/${
         event.target.textContent
       }/stats/participation`
     );
@@ -44,7 +51,7 @@ const ConnectedRepo = ({
 
   return (
     <>
-      {userName && publicRepos.length !== 0 && (
+      {username && publicRepos.length !== 0 && (
         <div>
           <h2 className="text-center">Public Repositories</h2>
           <ul className="app-repoContainer">
@@ -65,7 +72,7 @@ const ConnectedRepo = ({
 };
 
 const Repo = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ConnectedRepo);
 

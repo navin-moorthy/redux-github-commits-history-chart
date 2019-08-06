@@ -10,6 +10,12 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+const mapStateToProps = state => {
+  return {
+    chartData: state.chartData
+  };
+};
+
 const ConnectedModal = ({ chartData, modalStatus }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -68,7 +74,7 @@ const ConnectedModal = ({ chartData, modalStatus }) => {
 };
 
 const Modal = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ConnectedModal);
 

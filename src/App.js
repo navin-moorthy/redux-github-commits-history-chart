@@ -9,23 +9,12 @@ import Repo from "./components/Repo";
 
 const mapStateToProps = state => {
   return {
-    username: state.username,
     isValidUser: state.isValidUser,
-    userDetails: state.userDetails,
-    publicRepos: state.publicRepos,
-    chartData: state.chartData,
     isModalOpen: state.isModalOpen
   };
 };
 
-const ConnectedApp = ({
-  username,
-  isValidUser,
-  userDetails,
-  publicRepos,
-  chartData,
-  isModalOpen
-}) => {
+const ConnectedApp = ({ isValidUser, isModalOpen }) => {
   return (
     <div className="app">
       <h2 className="app-title text-center">GitHub Commits History Chart</h2>
@@ -38,9 +27,9 @@ const ConnectedApp = ({
           Please enter a valid username!!
         </div>
       )}
-      {!isValidUser && <Bio userName={username} userDetails={userDetails} />}
-      {!isValidUser && <Repo userName={username} publicRepos={publicRepos} />}
-      {isModalOpen && <Modal chartData={chartData} />}
+      {!isValidUser && <Bio />}
+      {!isValidUser && <Repo />}
+      {isModalOpen && <Modal />}
     </div>
   );
 };
